@@ -1,0 +1,63 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"] // rhel target is for Vercel's Linux servers
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model District {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String     @unique
+  state     String
+  incidents Incident[]
+}
+
+// Immutable satellite record. Never updated by assignment or review.
+model SatelliteObservation {
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  externalKey      String    @unique
+  source           String
+  satellite        String?
+  observedAt       DateTime
+  latitude         Float
+  longitude        Float
+  confidence       String?
+  brightness       Float?
+  frp              Float?
+  isSampleData     Boolean   @default(false)
+  incident         Incident?
+}
+
+model Incident {
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  observationId String               @unique @db.ObjectId
+  observation   SatelliteObservation @relation(fields: [observationId], references: [id])
+  districtId    String               @db.ObjectId
+  district      District             @relation(fields: [districtId], references: [id])
+  status        String               @default("DETECTED")
+  assignedTo    String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  events        IncidentEvent[]
+
+  @@index([districtId])
+  @@index([status])
+}
+
+// Append-only audit trail of assignments, reviews and status changes.
+model IncidentEvent {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  incidentId String   @db.ObjectId
+  incident   Incident @relation(fields: [incidentId], references: [id])
+  action     String
+  fromStatus String?
+  toStatus   String?
+  actor      String
+  note       String?
+  createdAt  DateTime @default(now())
+
+  @@index([incidentId])
+}

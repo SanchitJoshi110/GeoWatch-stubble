@@ -1,0 +1,35 @@
+{
+  "name": "stubble-burning-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "postinstall": "prisma generate",
+    "db": "node scripts/dev-db.mjs",
+    "sync": "node --env-file=.env scripts/sync-firms.mjs"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "leaflet": "^1.9.4",
+    "next": "16.4.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-leaflet": "^5.0.0",
+    "recharts": "^3.10.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.5",
+    "mongodb-memory-server": "^11.3.0",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^4"
+  },
+  "prisma": {},
+  "type": "module"
+}

@@ -1,0 +1,7 @@
+.data
+.data-log.txt
+.dev-log.txt
+.env
+.env.local
+.next
+node_modules
